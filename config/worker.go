@@ -1,3 +1,4 @@
+// Package config @author uangi 2023-05
 package config
 
 import (
@@ -17,6 +18,6 @@ func Reload() {
 	plog.TryThrow(err)
 }
 
-func GetConfig() Configuration {
-	return *conf
+func GetConfig() *Configuration {
+	return conf
 }

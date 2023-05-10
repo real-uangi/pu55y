@@ -1,3 +1,4 @@
+// Package character @author uangi 2023-05
 package character
 
 // AppendAll 累加字符串

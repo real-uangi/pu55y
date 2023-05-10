@@ -1,10 +1,10 @@
+// Package api @author uangi 2023-05
 package api
 
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/real-uangi/pu55y/plog"
-	"strconv"
 )
 
 type restfulApi struct {
@@ -16,7 +16,7 @@ type restfulApi struct {
 type Server struct {
 	apiMap    map[string]restfulApi
 	logEnable bool
-	port      int
+	port      string
 }
 
 // Run 启动
@@ -64,7 +64,7 @@ func (server *Server) Run() error {
 			}
 		}
 	}
-	return router.Run(":" + strconv.Itoa(server.port))
+	return router.Run(":" + server.port)
 }
 
 // AddApi 添加API
@@ -80,9 +80,9 @@ func (server *Server) AddApi(method Method, uri string, processor gin.HandlerFun
 }
 
 // ListenPort 监听端口
-func (server *Server) ListenPort(port int) {
+func (server *Server) ListenPort(port string) {
 	server.port = port
-	plog.Info("set port to " + strconv.Itoa(server.port))
+	plog.Info("set port to " + port)
 }
 
 // SetLog 开启日志

@@ -1,9 +1,11 @@
+// Package datasource @author uangi 2023-05
 package datasource
 
 import (
 	"database/sql"
 	_ "github.com/lib/pq"
 	"github.com/real-uangi/pu55y/character"
+	"github.com/real-uangi/pu55y/config"
 	"github.com/real-uangi/pu55y/plog"
 	"time"
 )
@@ -12,14 +14,18 @@ import (
 
 var db *sql.DB
 
-func InitDataSource(host string, port string, usr string, pw string, dbn string) {
+func InitDataSource(conf *config.Datasource) {
 	var err error = nil
-	var config string
-	config = character.AppendAll("host=", host, " port=", port, " user=", usr, " password=", pw, " dbname=", dbn, " sslmode=disable")
-	db, err = sql.Open(
-		"postgres",
-		config,
+	var cs string
+	cs = character.AppendAll(
+		"host=", conf.Host,
+		" port=", conf.Port,
+		" user=", conf.User,
+		" password=", conf.Password,
+		" dbname=", conf.Database,
+		" sslmode=disable",
 	)
+	db, err = sql.Open("postgres", cs)
 	if err != nil {
 		plog.Error(err.Error())
 	} else {

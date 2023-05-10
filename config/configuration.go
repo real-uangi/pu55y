@@ -1,9 +1,10 @@
+// Package config @author uangi 2023-05
 package config
 
 type Configuration struct {
 	Http       http         `json:"http"`
-	Datasource []datasource `json:"datasource"`
-	Redis      redis        `json:"redis"`
+	Datasource []Datasource `json:"datasource"`
+	Redis      Redis        `json:"redis"`
 }
 
 type http struct {
@@ -11,7 +12,7 @@ type http struct {
 	Log  bool   `json:"log"`
 }
 
-type datasource struct {
+type Datasource struct {
 	Host     string `json:"host"`
 	Port     string `json:"port"`
 	User     string `json:"user"`
@@ -19,7 +20,7 @@ type datasource struct {
 	Database string `json:"database"`
 }
 
-type redis struct {
+type Redis struct {
 	Addr     string `json:"addr"`
 	Password string `json:"password"`
 	Db       int    `json:"db"`
