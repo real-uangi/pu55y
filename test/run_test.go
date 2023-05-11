@@ -5,7 +5,6 @@ import (
 	"github.com/real-uangi/pu55y/api"
 	"github.com/real-uangi/pu55y/runner"
 	"testing"
-	"time"
 )
 
 func TestRun(t *testing.T) {
@@ -14,5 +13,4 @@ func TestRun(t *testing.T) {
 		context.JSON(200, "hello")
 	})
 	runner.Run()
-	time.Sleep(time.Hour)
 }

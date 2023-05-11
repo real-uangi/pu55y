@@ -7,6 +7,7 @@ import (
 	"github.com/real-uangi/pu55y/api"
 	"github.com/real-uangi/pu55y/config"
 	"github.com/real-uangi/pu55y/datasource"
+	"github.com/real-uangi/pu55y/plog"
 	"github.com/real-uangi/pu55y/rdb"
 )
 
@@ -30,5 +31,8 @@ func Run() {
 	if &conf.Redis != nil {
 		rdb.Init(&conf.Redis)
 	}
-
+	err := server.Run()
+	if err != nil {
+		plog.Error(err.Error())
+	}
 }
