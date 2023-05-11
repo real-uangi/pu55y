@@ -4,7 +4,7 @@ package config
 type Configuration struct {
 	Http       http         `json:"http"`
 	Datasource []Datasource `json:"datasource"`
-	Redis      Redis        `json:"redis"`
+	Redis      Redis        `json:"rdb"`
 }
 
 type http struct {
@@ -13,6 +13,7 @@ type http struct {
 }
 
 type Datasource struct {
+	Name     string `json:"name"`
 	Host     string `json:"host"`
 	Port     string `json:"port"`
 	User     string `json:"user"`

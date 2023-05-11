@@ -1,10 +1,11 @@
 {
   "http": {
-    "port": "80",
+    "port": "5001",
     "log": false
   },
   "datasource": [
     {
+      "name": "ds1",
       "host": "localhost",
       "port": "5432",
       "user": "admin",

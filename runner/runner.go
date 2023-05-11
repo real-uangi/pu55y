@@ -7,24 +7,28 @@ import (
 	"github.com/real-uangi/pu55y/api"
 	"github.com/real-uangi/pu55y/config"
 	"github.com/real-uangi/pu55y/datasource"
+	"github.com/real-uangi/pu55y/rdb"
 )
 
 var conf *config.Configuration
 
 var server *api.Server
 
-func Prepare() {
-
+func Prepare() *api.Server {
 	config.Reload()
 	conf = config.GetConfig()
-
-	server := api.Server{}
-	server.ListenPort(conf.Http.Port)
-
+	s := api.Server{}
+	s.ListenPort(conf.Http.Port)
+	server = &s
+	return server
 }
 
 func Run() {
-
-	datasource.InitDataSource(&conf.Datasource[0])
+	if conf.Datasource != nil {
+		datasource.InitDataSource(&conf.Datasource)
+	}
+	if &conf.Redis != nil {
+		rdb.Init(&conf.Redis)
+	}
 
 }

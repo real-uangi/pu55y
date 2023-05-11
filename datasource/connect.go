@@ -12,30 +12,38 @@ import (
 
 // database/sql 级别的DB,Stmt都是并发安全的
 
-var db *sql.DB
+var dbs = make(map[string]*sql.DB)
 
-func InitDataSource(conf *config.Datasource) {
+func InitDataSource(conf *[]config.Datasource) {
+	plog.Info("Initializing pu55y datasource...")
 	var err error = nil
-	var cs string
-	cs = character.AppendAll(
-		"host=", conf.Host,
-		" port=", conf.Port,
-		" user=", conf.User,
-		" password=", conf.Password,
-		" dbname=", conf.Database,
-		" sslmode=disable",
-	)
-	db, err = sql.Open("postgres", cs)
-	if err != nil {
-		plog.Error(err.Error())
-	} else {
-		db.SetConnMaxLifetime(time.Hour)
-		db.SetConnMaxIdleTime(5 * time.Minute)
-		db.SetMaxIdleConns(2)
-		db.SetMaxOpenConns(8)
+	// init multiple datasource
+	for _, c := range *conf {
+		var cs string
+		var db *sql.DB
+		cs = character.AppendAll(
+			"host=", c.Host,
+			" port=", c.Port,
+			" user=", c.User,
+			" password=", c.Password,
+			" dbname=", c.Database,
+			" sslmode=disable",
+		)
+		db, err = sql.Open("postgres", cs)
+		if err != nil {
+			plog.Error(err.Error())
+		} else {
+			db.SetConnMaxLifetime(time.Hour)
+			db.SetConnMaxIdleTime(5 * time.Minute)
+			db.SetMaxIdleConns(2)
+			db.SetMaxOpenConns(8)
+		}
+		dbs[c.Name] = db
+		plog.Info("Datasource [" + c.Name + "] initialized")
 	}
+
 }
 
-func GetDataSource() *sql.DB {
-	return db
+func Get(name string) *sql.DB {
+	return dbs[name]
 }

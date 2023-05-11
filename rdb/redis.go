@@ -1,8 +1,9 @@
-// Package redis @author uangi 2023-05
-package redis
+// Package rdb @author uangi 2023-05
+package rdb
 
 import (
 	"context"
+	"github.com/real-uangi/pu55y/config"
 	"github.com/real-uangi/pu55y/plog"
 	"github.com/redis/go-redis/v9"
 	"sync"
@@ -40,15 +41,18 @@ func getClient() *redis.Client {
 }
 
 // Init 启动 建议放在main函数内
-func Init(addr string, psw string, db int) {
+func Init(c *config.Redis) {
 	option = &redis.Options{
-		Addr:         addr, //连接地址
-		Password:     psw,  //密码
-		DB:           db,   //库
-		PoolSize:     8,    //连接池大小8
-		MinIdleConns: 2,    //最小空闲 2
+		Addr:         c.Addr,     //连接地址
+		Password:     c.Password, //密码
+		DB:           c.Db,       //库
+		PoolSize:     c.PoolMax,  //连接池大小8
+		MinIdleConns: c.PoolMin,  //最小空闲 2
 	}
 	getClient()
+	if client != nil {
+		plog.Info("Redis client connected to " + c.Addr)
+	}
 }
 
 // Set 设置
@@ -86,8 +90,8 @@ func SetExpire(key string, ttl time.Duration) bool {
 // TryLock 分布式锁
 func TryLock(key string, parse string, ttl int) bool {
 	script := redis.NewScript(`
-		if redis.call('setnx', KEYS[1], ARGV[1]) == 1 
-		then redis.call('pexpire', KEYS[1], tonumber(ARGV[2]));
+		if rdb.call('setnx', KEYS[1], ARGV[1]) == 1 
+		then rdb.call('pexpire', KEYS[1], tonumber(ARGV[2]));
 		return 1 
 		else return 0 end;
 	`)
@@ -103,8 +107,8 @@ func TryLock(key string, parse string, ttl int) bool {
 // Unlock 解锁
 func Unlock(key string, parse string) {
 	script := redis.NewScript(`
-		if redis.call('get', KEYS[1]) == ARGV[1] 
-		then return redis.call('del', KEYS[1])
+		if rdb.call('get', KEYS[1]) == ARGV[1] 
+		then return rdb.call('del', KEYS[1])
 		else return 0 end;
 	`)
 	keys := []string{key}

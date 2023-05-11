@@ -82,7 +82,7 @@ func (server *Server) AddApi(method Method, uri string, processor gin.HandlerFun
 // ListenPort 监听端口
 func (server *Server) ListenPort(port string) {
 	server.port = port
-	plog.Info("set port to " + port)
+	plog.Info("Starting server listen on port " + port)
 }
 
 // SetLog 开启日志
