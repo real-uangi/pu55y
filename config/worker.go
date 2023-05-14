@@ -10,7 +10,7 @@ import (
 var conf = &Configuration{}
 
 func Reload() {
-	f, err := os.Open("../conf.json")
+	f, err := os.Open("./conf.json")
 	plog.TryThrow(err)
 	defer f.Close()
 	dc := json.NewDecoder(f)
