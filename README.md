@@ -27,13 +27,14 @@ package main
 
 func main() {
 
-	server := runner.Prepare()
+	r := runner.Prepare()
 	
-	server.AddApi(api.GET, "/example", func(context *gin.Context) {
+	r.AddApi(api.GET, "/example", func(context *gin.Context) {
 		//your function here
 	})
 	//...
-	runner.Run()
+	
+	r.Run()
 	
 }
 ```

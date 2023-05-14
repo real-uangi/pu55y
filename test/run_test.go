@@ -8,9 +8,9 @@ import (
 )
 
 func TestRun(t *testing.T) {
-	server := runner.Prepare()
-	server.AddApi(api.GET, "/statistic/visit", func(context *gin.Context) {
+	r := runner.Prepare()
+	r.AddApi(api.GET, "/statistic/visit", func(context *gin.Context) {
 		context.JSON(200, "hello")
 	})
-	runner.Run()
+	r.Run()
 }

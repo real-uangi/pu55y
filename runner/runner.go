@@ -4,6 +4,7 @@
 package runner
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/real-uangi/pu55y/api"
 	"github.com/real-uangi/pu55y/config"
 	"github.com/real-uangi/pu55y/datasource"
@@ -11,28 +12,39 @@ import (
 	"github.com/real-uangi/pu55y/rdb"
 )
 
-var conf *config.Configuration
-
-var server *api.Server
-
-func Prepare() *api.Server {
-	config.Reload()
-	conf = config.GetConfig()
-	s := api.Server{}
-	s.ListenPort(conf.Http.Port)
-	server = &s
-	return server
+type Runner struct {
+	conf   *config.Configuration
+	server *api.Server
 }
 
-func Run() {
-	if conf.Datasource != nil {
-		datasource.InitDataSource(&conf.Datasource)
+func Prepare() *Runner {
+	config.Reload()
+	conf := config.GetConfig()
+	runner := Runner{}
+	s := api.Server{}
+	s.ListenPort(conf.Http.Port)
+	runner.server = &s
+	runner.conf = conf
+	return &runner
+}
+
+func (runner *Runner) Run() {
+	if runner.conf.Datasource != nil {
+		datasource.InitDataSource(&runner.conf.Datasource)
+	} else {
+		plog.Warn("Server running without datasource")
 	}
-	if &conf.Redis != nil {
-		rdb.Init(&conf.Redis)
+	if &runner.conf.Redis != nil {
+		rdb.Init(&runner.conf.Redis)
+	} else {
+		plog.Warn("Server running without redis")
 	}
-	err := server.Run()
+	err := runner.server.Run()
 	if err != nil {
 		plog.Error(err.Error())
 	}
+}
+
+func (runner *Runner) AddApi(method api.Method, uri string, processor gin.HandlerFunc) {
+	runner.server.AddApi(method, uri, processor)
 }
