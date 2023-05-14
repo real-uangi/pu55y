@@ -23,7 +23,7 @@ const (
 )
 
 // GetClient 获取已有的连接
-func getClient() *redis.Client {
+func GetClient() *redis.Client {
 	if client == nil {
 		if clientLock.TryLock() {
 			client = redis.NewClient(option)
@@ -49,7 +49,7 @@ func Init(c *config.Redis) {
 		PoolSize:     c.PoolMax,  //连接池大小8
 		MinIdleConns: c.PoolMin,  //最小空闲 2
 	}
-	getClient()
+	GetClient()
 	if client != nil {
 		plog.Info("Redis client connected to " + c.Addr)
 		ping := client.Ping(ctx)
@@ -72,7 +72,7 @@ func Set(key string, value interface{}) {
 
 // SetWithExpire 设置带过期
 func SetWithExpire(key string, value interface{}, dur time.Duration) {
-	err := getClient().Set(ctx, key, value, dur).Err()
+	err := GetClient().Set(ctx, key, value, dur).Err()
 	if err != nil {
 		plog.Error(err.Error())
 	}
@@ -80,7 +80,7 @@ func SetWithExpire(key string, value interface{}, dur time.Duration) {
 
 // Get 获取
 func Get(key string) string {
-	res, err := getClient().Get(ctx, key).Result()
+	res, err := GetClient().Get(ctx, key).Result()
 	if err != nil {
 		plog.Error(err.Error())
 	}
@@ -89,7 +89,7 @@ func Get(key string) string {
 
 // SetExpire 设置过期时间
 func SetExpire(key string, ttl time.Duration) bool {
-	err := getClient().Expire(ctx, key, ttl).Err()
+	err := GetClient().Expire(ctx, key, ttl).Err()
 	if err != nil {
 		plog.Error(err.Error())
 		return false
@@ -107,7 +107,7 @@ func TryLock(key string, parse string, ttl int) bool {
 	`)
 	keys := []string{key}
 	args := []interface{}{parse, ttl}
-	res, err := script.Run(ctx, getClient(), keys, args).Int()
+	res, err := script.Run(ctx, GetClient(), keys, args).Int()
 	if err != nil {
 		plog.Error(err.Error())
 	}
@@ -123,7 +123,7 @@ func Unlock(key string, parse string) {
 	`)
 	keys := []string{key}
 	args := []interface{}{parse}
-	err := script.Run(ctx, getClient(), keys, args).Err()
+	err := script.Run(ctx, GetClient(), keys, args).Err()
 	if err != nil {
 		plog.Error(err.Error())
 	}
