@@ -40,14 +40,14 @@ func InitDataSource(conf *[]config.Datasource) {
 		}
 		dbs[c.Name] = db
 		//check connection
-		query, err := dbs[c.Name].Query("select 1 as ans")
+		rows, err := dbs[c.Name].Query("select 1 as ans")
 		if err != nil {
 			plog.Error(err.Error())
 			plog.Error("Datasource [" + c.Name + "] failed to initialize")
 		} else {
 			var a string
-			query.Next()
-			e := query.Scan(&a)
+			rows.Next()
+			e := rows.Scan(&a)
 			if e != nil {
 				plog.Error(e.Error())
 			}
