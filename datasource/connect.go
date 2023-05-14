@@ -39,7 +39,21 @@ func InitDataSource(conf *[]config.Datasource) {
 			db.SetMaxOpenConns(8)
 		}
 		dbs[c.Name] = db
-		plog.Info("Datasource [" + c.Name + "] initialized")
+		//check connection
+		query, err := dbs[c.Name].Query("select 1 as ans")
+		if err != nil {
+			plog.Error(err.Error())
+			plog.Error("Datasource [" + c.Name + "] failed to initialize")
+		} else {
+			var a string
+			query.Next()
+			e := query.Scan(&a)
+			if e != nil {
+				plog.Error(e.Error())
+			}
+			plog.Info("Datasource [" + c.Name + "] initialized completed, test responded as : " + a)
+		}
+
 	}
 
 }

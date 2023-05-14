@@ -52,6 +52,16 @@ func Init(c *config.Redis) {
 	getClient()
 	if client != nil {
 		plog.Info("Redis client connected to " + c.Addr)
+		ping := client.Ping(ctx)
+		if ping != nil {
+			r, e := ping.Result()
+			if e != nil {
+				plog.Error(e.Error())
+				plog.Error("Redis connection check failed")
+			} else {
+				plog.Info("Redis 'ping' successfully responded as : " + r)
+			}
+		}
 	}
 }
 

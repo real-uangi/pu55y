@@ -39,6 +39,7 @@ func (runner *Runner) Run() {
 	} else {
 		plog.Warn("Server running without redis")
 	}
+	plog.Info("Runner init completed")
 	err := runner.server.Run()
 	if err != nil {
 		plog.Error(err.Error())
