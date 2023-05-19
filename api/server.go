@@ -26,7 +26,7 @@ func (server *Server) Run() error {
 	//http日志开关
 	if true == server.logEnable {
 		formatter := func(param gin.LogFormatterParams) string {
-			var msg = fmt.Sprintf("[%d]%s takes %d ", param.StatusCode, param.Path, param.Latency)
+			var msg = fmt.Sprintf("[%d] %s takes %dms", param.StatusCode, param.Path, param.Latency.Microseconds())
 			return plog.GetLine(plog.LvInfo, msg, param.TimeStamp)
 		}
 		router.Use(gin.LoggerWithConfig(gin.LoggerConfig{

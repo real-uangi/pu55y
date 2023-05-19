@@ -14,7 +14,7 @@ const (
 )
 
 func GetLine(lv string, msg string, t time.Time) string {
-	return fmt.Sprintf("%s  [%s ]  : %s\n", date.FormatDate(t), lv, msg)
+	return fmt.Sprintf("%s [%s] :  %s\n", date.FormatDate(t), lv, msg)
 }
 
 func Info(s string) {
