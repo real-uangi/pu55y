@@ -26,14 +26,14 @@ const (
 func GetClient() *redis.Client {
 	if client == nil {
 		if clientLock.TryLock() {
-			client = redis.NewClient(option)
 			defer clientLock.Unlock()
+			if client == nil {
+				client = redis.NewClient(option)
+			}
 		} else {
 			for {
-				time.Sleep(10 * time.Millisecond)
-				if client != nil {
-					return client
-				}
+				time.Sleep(5 * time.Millisecond)
+				return GetClient()
 			}
 		}
 	}
