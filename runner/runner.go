@@ -10,34 +10,33 @@ import (
 	"github.com/real-uangi/pu55y/datasource"
 	"github.com/real-uangi/pu55y/plog"
 	"github.com/real-uangi/pu55y/rdb"
+	"github.com/real-uangi/pu55y/snowflake"
 )
 
 type Runner struct {
-	conf   *config.Configuration
 	server *api.Server
 }
 
 func Prepare() *Runner {
 	config.Reload()
-	conf := config.GetConfig()
 	runner := Runner{}
 	s := api.Server{}
-	s.ListenPort(conf.Http.Port)
+	s.ListenPort(config.GetConfig().Http.Port)
 	runner.server = &s
-	runner.conf = conf
 	return &runner
 }
 
 func (runner *Runner) Run() {
-	if runner.conf.Datasource != nil {
-		datasource.InitDataSource(&runner.conf.Datasource)
+	if config.GetConfig().Datasource != nil {
+		datasource.InitDataSource(&config.GetConfig().Datasource)
 	} else {
 		plog.Warn("Server running without datasource")
 	}
-	if &runner.conf.Redis != nil {
-		rdb.Init(&runner.conf.Redis)
+	if &config.GetConfig().Redis != nil {
+		rdb.Init(&config.GetConfig().Redis)
+		snowflake.Init()
 	} else {
-		plog.Warn("Server running without redis")
+		plog.Warn("Server running without redis ,therefore snowflake id won't work")
 	}
 	plog.Info("Runner init completed")
 	err := runner.server.Run()

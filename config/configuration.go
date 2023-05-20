@@ -5,6 +5,7 @@ type Configuration struct {
 	Http       http         `json:"http"`
 	Datasource []Datasource `json:"datasource"`
 	Redis      Redis        `json:"rdb"`
+	Snowflake  Snowflake    `json:"snowflake"`
 }
 
 type http struct {
@@ -27,4 +28,17 @@ type Redis struct {
 	Db       int    `json:"db"`
 	PoolMin  int    `json:"poolMin"`
 	PoolMax  int    `json:"poolMax"`
+}
+
+type Snowflake struct {
+	Lazy   bool   `json:"lazy"`
+	PreGen preGen `json:"pre-generate"`
+}
+
+type preGen struct {
+	Enable   bool `json:"enable"`
+	Max      int  `json:"max"`
+	Min      int  `json:"min"`
+	Steps    int  `json:"steps"`
+	Interval int  `json:"interval"`
 }
