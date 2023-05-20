@@ -73,7 +73,8 @@ func getWorker() *worker {
 			if thisWorker == nil {
 				var i int64 = 0
 				for i < maxWorkerId {
-					if rdb.TryLock(redisRegKey+strconv.Itoa(int(i)), "snowflake", redisTtl) {
+					i++
+					if rdb.TryLock(redisRegKey+strconv.Itoa(int(i)), strconv.FormatInt(time.Now().UnixMilli(), 10), redisTtl) {
 						thisWorker = &worker{workerId: i, timestamp: 0, number: 0}
 						go overTimeWatcher()
 						plog.Info("Snowflake worker [" + strconv.Itoa(int(i)) + "] activated")
@@ -150,4 +151,5 @@ func (w *worker) preGen() {
 		idPool.ids.Push(w.nextId())
 		j++
 	}
+	plog.Info("added " + strconv.Itoa(j) + " ids to pool")
 }

@@ -19,7 +19,7 @@ var client *redis.Client
 var ctx = context.Background()
 
 const (
-	DefaultTtl = 24 * time.Hour
+	DefaultTtl = 86400
 )
 
 // GetClient 获取已有的连接
@@ -71,8 +71,8 @@ func Set(key string, value interface{}) {
 }
 
 // SetWithExpire 设置带过期
-func SetWithExpire(key string, value interface{}, dur time.Duration) {
-	err := GetClient().Set(ctx, key, value, dur).Err()
+func SetWithExpire(key string, value interface{}, ttl int) {
+	err := GetClient().Set(ctx, key, value, time.Duration(ttl)*time.Second).Err()
 	if err != nil {
 		plog.Error(err.Error())
 	}
@@ -88,8 +88,8 @@ func Get(key string) string {
 }
 
 // SetExpire 设置过期时间
-func SetExpire(key string, ttl time.Duration) bool {
-	err := GetClient().Expire(ctx, key, ttl).Err()
+func SetExpire(key string, ttl int) bool {
+	err := GetClient().Expire(ctx, key, time.Duration(ttl)*time.Second).Err()
 	if err != nil {
 		plog.Error(err.Error())
 		return false
@@ -99,26 +99,18 @@ func SetExpire(key string, ttl time.Duration) bool {
 
 // TryLock 分布式锁
 func TryLock(key string, parse string, ttl int) bool {
-	script := redis.NewScript(`
-		if rdb.call('setnx', KEYS[1], ARGV[1]) == 1 
-		then rdb.call('pexpire', KEYS[1], tonumber(ARGV[2]));
-		return 1 
-		else return 0 end;
-	`)
-	keys := []string{key}
-	args := []interface{}{parse, ttl}
-	res, err := script.Run(ctx, GetClient(), keys, args).Int()
+	b, err := GetClient().SetNX(ctx, key, parse, time.Duration(ttl)*time.Second).Result()
 	if err != nil {
 		plog.Error(err.Error())
 	}
-	return res == 1
+	return b
 }
 
 // Unlock 解锁
 func Unlock(key string, parse string) {
 	script := redis.NewScript(`
-		if rdb.call('get', KEYS[1]) == ARGV[1] 
-		then return rdb.call('del', KEYS[1])
+		if redis.call('get', KEYS[1]) == ARGV[1] 
+		then return redis.call('del', KEYS[1])
 		else return 0 end;
 	`)
 	keys := []string{key}
