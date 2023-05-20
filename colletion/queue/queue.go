@@ -10,28 +10,28 @@ type Queue struct {
 	size  int
 }
 
-func NewQueue() *Queue {
+func New() *Queue {
 	return &Queue{
 		items: make([]interface{}, 0),
 		size:  0,
 	}
 }
 
-func (q *Queue) isEmpty() bool {
+func (q *Queue) IsEmpty() bool {
 	return q.size == 0
 }
 
-func (q *Queue) getSize() int {
+func (q *Queue) GetSize() int {
 	return q.size
 }
 
-func (q *Queue) push(val interface{}) {
+func (q *Queue) Push(val interface{}) {
 	q.items = append(q.items, val)
 	q.size++
 }
 
-func (q *Queue) pop() (data interface{}, err error) {
-	if q.isEmpty() {
+func (q *Queue) Pop() (data interface{}, err error) {
+	if q.IsEmpty() {
 		err = errors.New("empty queue")
 	}
 	data = q.items[0]
@@ -41,7 +41,7 @@ func (q *Queue) pop() (data interface{}, err error) {
 }
 
 func (q *Queue) PeekNext() (data interface{}, err error) {
-	if q.isEmpty() {
+	if q.IsEmpty() {
 		err = errors.New("empty queue")
 	}
 	return q.items[0], err

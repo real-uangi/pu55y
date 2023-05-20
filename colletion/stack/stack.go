@@ -14,16 +14,16 @@ func New() *Stack {
 	}
 }
 
-func (s *Stack) isEmpty() bool {
+func (s *Stack) IsEmpty() bool {
 	return 0 == s.size
 }
 
-func (s *Stack) getSize() int {
+func (s *Stack) GetSize() int {
 	return s.size
 }
 
-func (s *Stack) pop() (data interface{}, err error) {
-	if s.isEmpty() {
+func (s *Stack) Pop() (data interface{}, err error) {
+	if s.IsEmpty() {
 		err = errors.New("empty stack")
 	}
 	data = s.items[s.size]
@@ -32,13 +32,13 @@ func (s *Stack) pop() (data interface{}, err error) {
 	return data, err
 }
 
-func (s *Stack) push(data interface{}) {
+func (s *Stack) Push(data interface{}) {
 	s.items = append(s.items, data)
 	s.size++
 }
 
 func (s *Stack) PeekNext() (data interface{}, err error) {
-	if s.isEmpty() {
+	if s.IsEmpty() {
 		err = errors.New("empty stack")
 	}
 	return s.items[0], err
