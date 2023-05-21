@@ -2,6 +2,7 @@
 package plog
 
 import (
+	"errors"
 	"fmt"
 	"github.com/real-uangi/pu55y/date"
 	"time"
@@ -34,4 +35,9 @@ func TryThrow(err error) {
 		Error(err.Error())
 		panic(err)
 	}
+}
+
+func Panic(msg string) {
+	Error(msg)
+	panic(errors.New(msg))
 }
