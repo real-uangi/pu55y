@@ -4,6 +4,7 @@
 package runner
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/real-uangi/pu55y/api"
 	"github.com/real-uangi/pu55y/config"
@@ -13,20 +14,30 @@ import (
 	"github.com/real-uangi/pu55y/snowflake"
 )
 
+const banner = `
+  _____    _    _   _____   _____  __     __
+ |  __ \  | |  | | | ____| | ____| \ \   / /
+ | |__) | | |  | | | |__   | |__    \ \_/ /      version: v1
+ |  ___/  | |  | | |___ \  |___ \    \   /       for more information 
+ | |      | |__| |  ___) |  ___) |    | |        see https://github.com/real-uangi/pu55y
+ |_|       \____/  |____/  |____/     |_|   
+
+`
+
 type Runner struct {
 	server *api.Server
 }
 
 func Prepare() *Runner {
+	fmt.Print(banner)
+	// configurations
 	config.Reload()
+	// gin server
 	runner := Runner{}
 	s := api.Server{}
 	s.ListenPort(config.GetConfig().Http.Port)
 	runner.server = &s
-	return &runner
-}
-
-func (runner *Runner) Run() {
+	// dependencies
 	if config.GetConfig().Datasource != nil {
 		datasource.InitDataSource(&config.GetConfig().Datasource)
 	} else {
@@ -38,6 +49,10 @@ func (runner *Runner) Run() {
 	} else {
 		plog.Warn("Server running without redis ,therefore snowflake id won't work")
 	}
+	return &runner
+}
+
+func (runner *Runner) Run() {
 	plog.Info("Runner init completed")
 	err := runner.server.Run()
 	if err != nil {
