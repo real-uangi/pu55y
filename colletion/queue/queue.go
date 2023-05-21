@@ -18,7 +18,7 @@ func New() *Queue {
 }
 
 func (q *Queue) IsEmpty() bool {
-	return q.size == 0
+	return 0 == q.size
 }
 
 func (q *Queue) GetSize() int {
