@@ -41,7 +41,8 @@ func GetClient() *redis.Client {
 }
 
 // Init 启动 建议放在main函数内
-func Init(c *config.Redis) {
+func Init() {
+	c := config.GetConfig().Redis
 	option = &redis.Options{
 		Addr:         c.Addr,     //连接地址
 		Password:     c.Password, //密码
