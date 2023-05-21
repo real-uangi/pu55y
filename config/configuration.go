@@ -2,10 +2,15 @@
 package config
 
 type Configuration struct {
+	Sys        sys          `json:"sys"`
 	Http       http         `json:"http"`
-	Datasource []Datasource `json:"datasource"`
-	Redis      Redis        `json:"rdb"`
-	Snowflake  Snowflake    `json:"snowflake"`
+	Datasource []datasource `json:"datasource"`
+	Redis      redis        `json:"rdb"`
+	Snowflake  snowflake    `json:"snowflake"`
+}
+
+type sys struct {
+	Date date
 }
 
 type http struct {
@@ -13,7 +18,7 @@ type http struct {
 	Log  bool   `json:"log"`
 }
 
-type Datasource struct {
+type datasource struct {
 	Name     string `json:"name"`
 	Host     string `json:"host"`
 	Port     string `json:"port"`
@@ -22,7 +27,7 @@ type Datasource struct {
 	Database string `json:"database"`
 }
 
-type Redis struct {
+type redis struct {
 	Addr     string `json:"addr"`
 	Password string `json:"password"`
 	Db       int    `json:"db"`
@@ -30,7 +35,7 @@ type Redis struct {
 	PoolMax  int    `json:"poolMax"`
 }
 
-type Snowflake struct {
+type snowflake struct {
 	Lazy   bool   `json:"lazy"`
 	PreGen preGen `json:"pre-generate"`
 }
@@ -41,4 +46,9 @@ type preGen struct {
 	Min      int  `json:"min"`
 	Steps    int  `json:"steps"`
 	Interval int  `json:"interval"`
+}
+
+type date struct {
+	Zone   string
+	Layout string
 }

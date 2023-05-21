@@ -14,11 +14,12 @@ import (
 
 var dbs = make(map[string]*sql.DB)
 
-func InitDataSource(conf *[]config.Datasource) {
+func InitDataSource() {
+	conf := config.GetConfig().Datasource
 	plog.Info("Initializing pu55y datasource...")
 	var err error = nil
 	// init multiple datasource
-	for _, c := range *conf {
+	for _, c := range conf {
 		var cs string
 		var db *sql.DB
 		cs = character.AppendAll(

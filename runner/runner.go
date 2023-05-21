@@ -9,6 +9,7 @@ import (
 	"github.com/real-uangi/pu55y/api"
 	"github.com/real-uangi/pu55y/config"
 	"github.com/real-uangi/pu55y/datasource"
+	"github.com/real-uangi/pu55y/date"
 	"github.com/real-uangi/pu55y/plog"
 	"github.com/real-uangi/pu55y/rdb"
 	"github.com/real-uangi/pu55y/snowflake"
@@ -32,6 +33,8 @@ func Prepare() *Runner {
 	fmt.Print(banner)
 	// configurations
 	config.Reload()
+	// init date util
+	date.Init()
 	// gin server
 	runner := Runner{}
 	s := api.Server{}
@@ -39,12 +42,12 @@ func Prepare() *Runner {
 	runner.server = &s
 	// dependencies
 	if config.GetConfig().Datasource != nil {
-		datasource.InitDataSource(&config.GetConfig().Datasource)
+		datasource.InitDataSource()
 	} else {
 		plog.Warn("Server running without datasource")
 	}
 	if &config.GetConfig().Redis != nil {
-		rdb.Init(&config.GetConfig().Redis)
+		rdb.Init()
 		snowflake.Init()
 	} else {
 		plog.Warn("Server running without redis ,therefore snowflake id won't work")
