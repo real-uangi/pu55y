@@ -36,16 +36,7 @@ type redis struct {
 }
 
 type snowflake struct {
-	Lazy   bool   `json:"lazy"`
-	PreGen preGen `json:"pre-generate"`
-}
-
-type preGen struct {
-	Enable   bool `json:"enable"`
-	Max      int  `json:"max"`
-	Min      int  `json:"min"`
-	Steps    int  `json:"steps"`
-	Interval int  `json:"interval"`
+	Interval int `json:"interval"`
 }
 
 type date struct {
