@@ -27,13 +27,6 @@
     "pool-max": 8
   },
   "snowflake": {
-    "lazy": true,
-    "pre-generate": {
-      "enable": false,
-      "max": 10000,
-      "min": 0,
-      "steps": 1000,
-      "interval": 300
-    }
+    "interval": 300
   }
 }
