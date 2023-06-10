@@ -13,13 +13,13 @@ import (
 type ID int64
 
 const (
-	workerBits  uint8 = 10
-	numberBits  uint8 = 12
+	workerBits  uint8 = 8
+	numberBits  uint8 = 14
 	workerMax   int64 = -1 ^ (-1 << workerBits)
 	numberMax   int64 = -1 ^ (-1 << numberBits)
 	timeShift         = workerBits + numberBits
 	workerShift       = numberBits
-	epoch       int64 = 1684512000000
+	epoch       int64 = 1686326400000
 	redisRegKey       = "SNOWFLAKE:KEY:"
 )
 
@@ -60,11 +60,13 @@ func newWorker() *Worker {
 	for i = 0; i < workerMax; i++ {
 		if rdb.TryLock(redisRegKey+strconv.Itoa(int(i)), strconv.FormatInt(time.Now().UnixMilli(), 10), interval) {
 			plog.Info("Snowflake worker [" + strconv.Itoa(int(i)) + "] activating")
-			return &Worker{
+			w := &Worker{
 				timestamp: 0,
 				workerId:  i,
 				number:    0,
 			}
+			go keepInstanceOn()
+			return w
 		}
 	}
 	plog.Error("Failed to register Snowflake instance")
@@ -73,10 +75,13 @@ func newWorker() *Worker {
 
 func keepInstanceOn() {
 	time.Sleep(time.Duration(interval-60) * time.Second)
+	refresh()
+}
+
+func refresh() {
 	mu.Lock()
+	defer mu.Unlock()
 	instance = newWorker()
-	mu.Unlock()
-	keepInstanceOn()
 }
 
 func (w *Worker) nextId() ID {
